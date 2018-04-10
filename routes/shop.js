@@ -16,6 +16,12 @@ router.post('/cms/shop/readOne', function (req, res, next) {
     Shop.readOne(req, res, next);
 });
 /**
+ * PC获取某一商店商品信息的路由控制接口
+ */
+router.post('/cms/shop/readGoods', function (req, res, next) {
+    Shop.readGoods(req, res, next);
+});
+/**
  * PC商店名称检验的路由控制接口
  */
 router.post('/cms/shop/checkName', function (req, res, next) {

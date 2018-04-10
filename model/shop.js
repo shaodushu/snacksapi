@@ -90,6 +90,27 @@ class Shop {
             });
         }).catch(err => console.log(err))
     }
+    
+    /**
+     * 读取商品信息
+     * @param {*} req 
+     * @param {*} res 
+     * @param {*} next 
+     */
+    readGoods(req, res, next) {
+        let param = req.body || req.query || req.params;
+        let total = null;
+        this.operationArgs(commands.shop.cms.readGoodsNum,[param.shopId]).then(val => {
+            return Promise.all([this.operationArgs(commands.shop.cms.readGoods(param), [(param.page - 1) * param.size, param.page * param.size]), val[0]['COUNT(id)']]);
+        }).then(([result, total]) => {
+            connection.queryReturn(res, {
+                status: 1,
+                data: result,
+                total: total,
+                msg: '查询成功'
+            });
+        }).catch(err => console.log(err))
+    }
     /**
      * 改变接受值的类型
      * @param {Object} param 

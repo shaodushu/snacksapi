@@ -58,9 +58,10 @@ const shop = {
     cms: {
         checkName:'SELECT COUNT(id) FROM shop WHERE name=?',
         readAllNum:'SELECT COUNT(id) FROM shop ',
+        readGoodsNum:'SELECT COUNT(id) FROM shop_foods WHERE id=?',
         readOne:'SELECT * FROM shop WHERE id=?',
         /**
-         * 
+         * 分页读取商店信息-sql
          * @param {Object} obj 
          */
         readPart(obj) {
@@ -73,10 +74,26 @@ const shop = {
                     base = ' AND ' + base + 'status=' + obj.status;
                 }
             }
-            return 'select * from shop ' + base + ' limit ?,?'
+            return 'select * from shop ' + base + ' limit ?,?';
         },
         /**
-         * 
+         * 分页读取商店商品信息-sql
+         * @param {Object} obj 
+         */
+        readGoods(obj){
+            let base = '';
+            if (obj.name || obj.status) {
+                base = base + 'where ';
+                if (obj.name) {
+                    base = base + 'name="' + obj.name + '"';
+                } else if (obj.status) {
+                    base = ' AND ' + base + 'status=' + obj.status;
+                }
+            }
+            return 'select * from shop_foods ' + base + ' limit ?,?';
+        },
+        /**
+         * 创建商店信息-sql
          * @param {Array} key 
          * @param {Array} val 
          */
@@ -84,7 +101,7 @@ const shop = {
             return 'INSERT INTO shop ('+key+') VALUES ('+val+')';
         },
         /**
-         * 
+         * 更新商店信息-sql
          * @param {Array} key 
          * @param {Array} val 
          */

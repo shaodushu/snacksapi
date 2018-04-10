@@ -8,13 +8,12 @@ const cors = require('cors');
 const expressJWT = require('express-jwt');
 
 const index = require('./routes/index');
-const repair = require('./routes/repair');
-const other = require('./routes/other');
-
 const login = require('./routes/login');
 const goods=require('./routes/goods');
 const shop=require('./routes/shop');
 const area=require('./routes/area');
+const repair = require('./routes/repair');
+const other = require('./routes/other');
 
 const app = express();
 /**
@@ -47,15 +46,13 @@ app.use(expressJWT({
 }));
 
 
-app.use('/login', login);
 app.use('/', index);
-app.use('/repair', repair);
-app.use('/api', other);
-
 app.use('/api', login);
 app.use('/api', goods);
 app.use('/api', shop);
 app.use('/api', area);
+app.use('/api', repair);
+app.use('/api', other);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
