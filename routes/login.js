@@ -10,6 +10,12 @@ router.post('/userAuth', function (req, res, next) {
     Login.userAuth(req, res, next);
 });
 /**
+ * 移动端的路由控制接口
+ */
+router.post('/clientAuth', function (req, res, next) {
+    Login.clientAuth(req, res, next);
+});
+/**
  * 退出后台的路由控制接口
  */
 router.get('/out', function (req, res, next) {

@@ -20,5 +20,37 @@ router.get('/goods', function (req, res, next) {
         })
     })
 });
+router.get('/ratings', function (req, res, next) {
+    // 向服务端发送请求
+    let _this = res;
+    http.get('http://ustbhuangyi.com/sell/api/ratings', res => {
+        let data = "";
+        res.on("data", (chunk) => {
+            data += chunk;
+        });
+        res.on("end", () => {
+            connection.queryReturn(_this, JSON.parse(data));
+        })
+        res.on("error", (e) => {
+            connection.queryReturn(_this, e.message);
+        })
+    })
+});
+router.get('/seller', function (req, res, next) {
+    // 向服务端发送请求
+    let _this = res;
+    http.get('http://ustbhuangyi.com/sell/api/seller', res => {
+        let data = "";
+        res.on("data", (chunk) => {
+            data += chunk;
+        });
+        res.on("end", () => {
+            connection.queryReturn(_this, JSON.parse(data));
+        })
+        res.on("error", (e) => {
+            connection.queryReturn(_this, e.message);
+        })
+    })
+});
 
 module.exports = router;

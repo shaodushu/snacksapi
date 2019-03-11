@@ -1,4 +1,3 @@
-
 const connection = require('../common/connection');
 const commands = require('../common/commands');
 const security = require('../utils/security');
@@ -30,13 +29,19 @@ class Login {
     userAuth(req, res, next) {
         // 获取前台页面传过来的参数
         let param = req.body || req.query || req.params;
-        // 执行Query
+        
         this.operation(commands.login.userAuth, [param.account, param.pwd]).then(result => {
+            
             if (result.length > 0) {
                 this.operation(commands.login.replace, [result[0].id]).then(() => {
                     return this.operation(commands.login.update, [Date.now(), this.getClientIp(req), result[0].id]);
                 }).then(() => {
-                    return this.operation(commands.login.adminInfo, [result[0].handleId]);
+                    if(result[0].type===0){
+                        return this.operation(commands.login.adminInfo, [result[0].handleId]);
+                    }else{
+                        return this.operation(commands.login.repairInfo, [result[0].handleId]);
+                    }
+                    
                 }).then(val => {
                     connection.queryReturn(res, {
                         status: 1,
@@ -44,26 +49,27 @@ class Login {
                             type: result[0].type,
                             name: val[0].name,
                             lastTime: result[0].lastLoginTime,
-                            lastArea:result[0].lastLoginArea,
+                            lastArea: result[0].lastLoginArea,
                             avator: val[0].image,
                             handleId: result[0].handleId,
                             token: jwt.sign({
                                 account: result.account,
                                 pwd: result.pwd
-                            }, "shaodushu", { expiresIn: 60 * 30 })
+                            }, "shaodushu", {
+                                expiresIn: 60 * 30
+                            })
                         },
                         msg: '登录成功'
                     });
-                }).catch(err=>{
+                }).catch(err => {
                     connection.queryReturn(res, {
                         status: 0,
-                        data:err,
+                        data: err,
                         msg: '系统错误'
                     });
                 });
 
-            }
-            else {
+            } else {
                 connection.queryReturn(res, {
                     status: 0,
                     msg: '账户密码错误'
@@ -72,6 +78,21 @@ class Login {
         }).catch(err => {
             console.log(err)
         })
+    }
+    clientAuth(req, res, next) {
+        let param = req.body || req.query || req.params;
+        connection.queryReturn(res, {
+            status: 1,
+            data: {
+                discern: param.fingerprint,
+                token: jwt.sign({
+                    fingerprint: param.fingerprint,
+                }, "shaodushu", {
+                    expiresIn: 60 * 60
+                })
+            },
+            msg: '获取权限成功'
+        });
     }
 
 }
